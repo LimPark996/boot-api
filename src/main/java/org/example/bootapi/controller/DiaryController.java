@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
-public class MainController {
+public class DiaryController {
     private final StorageService storageService;
     private final DiaryService diaryService;
 
