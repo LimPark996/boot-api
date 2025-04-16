@@ -44,6 +44,9 @@ public class DiaryController {
         Diary diary = new Diary();
         diary.setTitle(form.title());
         diary.setContent(form.content());
+        // 여기서 한 번 더 검사...
+        // TIL : Validation
+        // https? : 인증서. SSL/TLS -> 해싱.
         if (!form.file().isEmpty()) {
             String imageName = storageService.upload(form.file());
             redirectAttributes.addFlashAttribute("image", imageName);
