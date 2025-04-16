@@ -129,3 +129,66 @@ Service에서 Entity ↔ DTO로 변환
 목적 | DB와 직접 연결되는 계층, 즉, 서비스 계층이 실제로 SQL을 직접 다루지 않고도 DB 작업을 할 수 있게 해줌
 제공 기능 | save(), findAll(), findById(), deleteById() 같은 기본 CRUD 메서드 제공
 내부 동작 | Spring Data JPA가 자동으로 구현체를 만들어서, Hibernate를 통해 SQL을 실행함
+
+---
+
+## Summary
+
+```mermaid
+sequenceDiagram
+    participant 사용자
+    participant Controller
+    participant Service
+    participant Repository
+    participant Hibernate
+    participant JDBC
+    participant SupabaseDB
+
+    사용자->>Controller: JSON 요청 (ex. PostRequestDto)
+    Controller->>Service: DTO 전달 및 요청 처리 위임
+
+    Service->>Service: DTO → Entity 변환
+    Service->>Service: 유효성 검사 및 비즈니스 로직 수행
+
+    Service->>Repository: Entity 저장 요청
+    Repository->>Hibernate: JPA 명령 위임 (persist)
+
+    Hibernate->>JDBC: SQL 생성 및 실행 요청
+    JDBC->>SupabaseDB: INSERT 쿼리 전송
+
+    SupabaseDB-->>JDBC: 저장 완료 응답
+    JDBC-->>Hibernate: 결과 전달
+    Hibernate-->>Repository: 저장된 Entity 반환
+    Repository-->>Service: 저장 결과 전달
+
+    Service->>Service: Entity → 응답 DTO 변환
+    Service->>Controller: 응답 DTO 전달
+    Controller->>사용자: JSON 응답
+```
+
+**✅ 시각 설명**
+
+🔁 사용자 ↔ DTO: JSON 요청/응답
+
+🧭 DTO → Controller → Service: 사용자의 요청을 처리
+
+🔄 Service → Entity & Repository: 비즈니스 로직 실행
+
+⚙️ Repository → Hibernate: SQL 자동 생성
+
+📡 Hibernate → JDBC Driver → Supabase: 실제 DB에 반영
+
+---
+
+**✅ 구성 요소별 역할 요약**
+
+| 역할 | 주요 흐름 |
+| ---- | ---------- |
+DTO | 사용자 요청/응답을 안전하게 주고받기 위한 가공된 형태
+Entity | DB와 직접 매핑되는 객체 (DB 저장/조회 목적)
+Controller | HTTP 요청 받는 진입점, DTO만 다룸
+Service | DTO ↔ Entity 변환 및 비즈니스 로직 수행
+JPA Repository | save(), findAll() 등 CRUD 인터페이스
+Hibernate | JPA 명령을 SQL로 바꾸는 ORM
+JDBC Driver | PostgreSQL과 Java를 연결
+Supabase | 실제 데이터가 저장되는 PostgreSQL 서버
