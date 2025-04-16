@@ -25,3 +25,8 @@ spring:
     url: ${POSTGRES_URL} # PostgreSQL URL로 변경
     username: ${POSTGRES_USERNAME} # PostgreSQL 사용자 이름으로 변경
     password: ${POSTGRES_PASSWORD} # PostgreSQL 비밀번호로 변경
+# 객체 스토리지
+supabase:
+  url: ${SUPABASE_URL}
+  bucket-name: ${SUPABASE_BUCKET_NAME}
+  access-key: ${SUPABASE_ACCESS_KEY}
