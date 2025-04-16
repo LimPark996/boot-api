@@ -14,24 +14,32 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequestMapping("/diary")
 @RequiredArgsConstructor
 public class DiaryController {
     private final StorageService storageService;
     private final DiaryService diaryService;
 
     @GetMapping
-    public String index(Model model) throws Exception {
-        model.addAttribute("title", "카피바라!");
-        model.addAttribute("message", "즐거운 하루!");
-        model.addAttribute("form", DiaryForm.empty());
+    public String list(Model model) throws Exception {
+        model.addAttribute("title", "일기 목록");
+        model.addAttribute("message", "일기를 작성해보세요!");
+//        model.addAttribute("form", DiaryForm.empty());
         model.addAttribute("list", diaryService.getAllDiaryList());
-        return "index";
+        return "diary/list";
     }
 
-    @PostMapping
+    @GetMapping("/new")
+    public String newForm(Model model) throws Exception {
+        model.addAttribute("form", DiaryForm.empty());
+        return "diary/form";
+    }
+
+    @PostMapping("/new")
     public String post(DiaryForm form, RedirectAttributes redirectAttributes) throws Exception {
         Diary diary = new Diary();
         diary.setTitle(form.title());
@@ -42,19 +50,6 @@ public class DiaryController {
             diary.setFilename(imageName); // 이거 빼먹지 마세요!
         }
         diaryService.createDiary(diary);
-        return "redirect:/";
-    }
-
-    @GetMapping("/file/{filename}")
-    public ResponseEntity<byte[]> file(@PathVariable String filename) {
-        try {
-            byte[] fileBytes = storageService.download(filename); // 버킷 -> 파일 이름 요청
-
-            // 페이지(템플릿)로 응답하지 않고, 데이터로 응답하겠다
-            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(fileBytes);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return "redirect:/diary";
     }
 }

@@ -1,9 +1,6 @@
 package org.example.bootapi.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.bootapi.model.entity.Diary;
-import org.example.bootapi.model.form.DiaryForm;
-import org.example.bootapi.service.DiaryService;
 import org.example.bootapi.service.StorageService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,36 +10,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
 public class MainController {
     private final StorageService storageService;
-    private final DiaryService diaryService;
 
     @GetMapping
-    public String index(Model model) throws Exception {
-        model.addAttribute("title", "카피바라!");
-        model.addAttribute("message", "즐거운 하루!");
-        model.addAttribute("form", DiaryForm.empty());
-        model.addAttribute("list", diaryService.getAllDiaryList());
+    public String index(Model model) {
+        model.addAttribute("title", "✨ AI 일기 앱");
+        model.addAttribute("message", "AI가 당신의 일기의 숨은 뜻을 해석해드립니다!");
         return "index";
-    }
-
-    @PostMapping
-    public String post(DiaryForm form, RedirectAttributes redirectAttributes) throws Exception {
-        Diary diary = new Diary();
-        diary.setTitle(form.title());
-        diary.setContent(form.content());
-        if (!form.file().isEmpty()) {
-            String imageName = storageService.upload(form.file());
-            redirectAttributes.addFlashAttribute("image", imageName);
-            diary.setFilename(imageName); // 이거 빼먹지 마세요!
-        }
-        diaryService.createDiary(diary);
-        return "redirect:/";
     }
 
     @GetMapping("/file/{filename}")

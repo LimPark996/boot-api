@@ -3,26 +3,9 @@
 <head th:replace="~{fragments/common :: head}"></head>
 <body>
     <p th:text="${message}"></p>
-    <section>
-        <form th:action="@{/}" method="post" th:object="${form}" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 1rem;">
-            <label>제목 : <input th:field="*{title}"></label>
-            <label>내용 : <textarea th:field="*{content}"></textarea></label>
-            <label>파일 : <input type="file" th:field="*{file}" ></label>
-            <button>등록</button>
-        </form>
-    </section>
-    <section>
-        <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem" th:each="el : ${list}">
-            <h3 th:text="${el.title}"></h3>
-            <h4 th:text="${el.createdAt}"></h4>
-            <p th:text="${el.content}"></p>
-            <div th:if="${el.filename}">
-                <img th:src="@{/file/{filename}(filename=${el.filename})}" th:width="240" th:alt="이미지">
-            </div>
-        </div>
-    </section>
-<!--    <section th:if="${image}">-->
-<!--        <img th:src="@{/file/{filename}(filename=${image})}" th:width="240" th:alt="이미지">-->
-<!--    </section>-->
+    <nav>
+        <a th:href="@{/diary}">일기 목록</a>
+        <a th:href="@{/diary/new}">일기 생성</a>
+    </nav>
 </body>
 </html>
